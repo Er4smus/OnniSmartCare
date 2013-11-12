@@ -1,0 +1,149 @@
+<project name="stream-m" default="package" basedir=".">
+   <description>
+		stream.m is a video broadcasting tool compatible with Google's WebM format.
+	</description>
+
+   <!-- set global properties for this build -->
+   <property name="src" location="src" />
+   <property name="classes" location="classes" />
+   <property name="target" location="target" />
+   <property name="debug" value="true" />
+
+
+   <path id="master-classpath">
+      <fileset dir="lib">
+         <include name="*.jar" />
+      </fileset>
+   </path>
+
+   <target name="init">
+      <!-- Create the time stamp -->
+      <tstamp />
+      <!-- Create the build directory structure used by compile -->
+      <mkdir dir="${target}" />
+      <mkdir dir="${classes}" />
+   </target>
+
+   <target name="compile" depends="init" description="compile the source">
+      <!-- Compile the java code from ${src} into ${build} -->
+      <javac debug="${debug}" destdir="${classes}" includeantruntime="false">
+         <src path="${src}" />
+         <classpath refid="master-classpath" />
+      </javac>
+
+   </target>
+
+   <target name="package" depends="compile" description="generate the distribution">
+      <mkdir dir="${target}" />
+
+      <!-- Create Jar file  with dependencies-->
+      <jar jarfile="${target}/webcam.jar" basedir="${classes}">
+         <zipgroupfileset dir="lib" includes="**/*.jar" />
+         <manifest>
+            <attribute name="Main-Class" value="com.neusoft.babymonitor.backend.webcam.WebcamMain" />
+            <attribute name="Class-Path" value="${jar.classpath}" />
+         </manifest>
+         <fileset dir="src/resources" />
+      </jar>
+
+      <!-- Copy Streaming bat file -->
+      <copy file="StartStreaming.bat" todir="${target}" />
+   </target>
+
+
+   <target name="clean" description="clean up">
+      <!-- Delete the ${classes} and ${dist} directory trees -->
+      <delete dir="${classes}" />
+      <delete dir="${target}" />
+   </target>
+
+   <taskdef name="deb" classname="com.googlecode.ant_deb_task.Deb" classpathref="master-classpath" />
+   <property file="build.properties" />
+
+
+   <!-- Target for building the linux .deb file -->
+   <target name="distLinux" depends="package" description="build the .deb files">
+      <delete dir="dist" />
+      <mkdir dir="dist" />
+      <mkdir dir="dist/linux" />
+      <mkdir dir="dist/linux/64B" />
+      <mkdir dir="dist/linux/32B" />
+      <!-- Create the deb file for 64 bits Linux -->
+      <deb todir="dist/linux/64B" package="${package.name}" section="utils" predepends="${pre.depends}">
+         <!-- Get the version of the application and the version for debian from the properties file. -->
+         <version upstream="${version}" debian="${version.debian}" />
+         <maintainer name="${maintainer.name}" email="${maintainer.email}" />
+         <description synopsis="${synopsis}">
+            ${description} 
+         </description>
+         <!-- Include the necessary files in the .deb package. Prefix represents the location where the files 
+              will be placed by default when the .deb package will be unpacked. -->
+         <!-- Include ffmpeg in the .deb package. -->
+         <tarfileset file="ffmpeg_linux64B/ffmpeg" prefix="usr/share/${package.name}/ffmpeg" filemode="755" />
+         <tarfileset file="listLinuxVideo.sh" prefix="usr/share/${package.name}" filemode="755" />
+         <!-- Include webcam.jar -->
+         <tarfileset file="target/webcam.jar" prefix="usr/share/${package.name}" />
+         <!-- Include ffmpeg libx264 dependency -->
+         <tarfileset file="ffmpegLibs/64B/libx264.so.138" prefix="usr/local/lib" filemode="755" />
+         <!-- Include license, readme and troubleshoting text files -->
+         <tarfileset file="README.txt" prefix="usr/share/${package.name}" filemode="755" />
+         <tarfileset file="GPL.txt" prefix="usr/share/${package.name}" filemode="755" />
+         <tarfileset file="LICENSE.txt" prefix="usr/share/${package.name}" filemode="755" />
+         <tarfileset file="TROUBLESHOOTING.txt" prefix="usr/share/${package.name}" filemode="755" />
+         <!-- Include the shell script that must be runned after installation in order to configure dependencies -->
+         <tarfileset file="config.sh" prefix="usr/share/${package.name}" filemode="755" />
+      </deb>
+      <!-- Create the deb file for 32 bits Linux -->
+      <deb todir="dist/linux/32B" package="${package.name}" section="utils" predepends="${pre.depends}">
+         <!-- Get the version of the application and the version for debian from the properties file. -->
+         <version upstream="${version}" debian="${version.debian}" />
+         <maintainer name="${maintainer.name}" email="${maintainer.email}" />
+         <description synopsis="${synopsis}">
+            ${description} 
+         </description>
+         <!-- Include the necessary files in the .deb package. Prefix represents the location where the files 
+              will be placed by default when the .deb package will be unpacked. -->
+         <!-- Include ffmpeg in the .deb package. -->
+         <tarfileset file="ffmpeg_linux32B/ffmpeg" prefix="usr/share/${package.name}/ffmpeg" filemode="755" />
+         <tarfileset file="listLinuxVideo.sh" prefix="usr/share/${package.name}" filemode="755" />
+         <!-- Include webcam.jar -->
+         <tarfileset file="target/webcam.jar" prefix="usr/share/${package.name}" />
+         <!-- Include ffmpeg libx264 dependency -->
+         <tarfileset file="ffmpegLibs/32B/libx264.so.140" prefix="usr/local/lib" filemode="755" />
+         <!-- Include license, readme and troubleshoting text files -->
+         <tarfileset file="README.txt" prefix="usr/share/${package.name}" filemode="755" />
+         <tarfileset file="GPL.txt" prefix="usr/share/${package.name}" filemode="755" />
+         <tarfileset file="LICENSE.txt" prefix="usr/share/${package.name}" filemode="755" />
+         <tarfileset file="TROUBLESHOOTING.txt" prefix="usr/share/${package.name}" filemode="755" />
+         <!-- Include the shell script that must be runned after installation in order to configure dependencies -->
+         <tarfileset file="config.sh" prefix="usr/share/${package.name}" filemode="755" />
+      </deb>
+   </target>
+   
+   <!-- Target for building windows distribution packages -->
+   <target name="distWindows" depends="package" description="build the windows .zip files">
+      <mkdir dir="dist" />
+      <mkdir dir="dist/windows" />
+      <delete file="dist/windows/${package.name}-${version}.zip" />
+      <zip destfile="dist/windows/${package.name}-${version}.zip">
+         <!-- Include ffmpeg in the zip package. -->
+         <zipfileset dir="ffmpeg_windows" prefix="ffmpeg" />
+         <!-- Include 32 bit vlc files in the zip package. -->
+         <zipfileset dir="vlcWindows32B" prefix="vlc/vlc32B" />
+         <!-- Include 64 bit vlc files in the zip package. -->
+         <zipfileset dir="vlcWindows64B" prefix="vlc/vlc64B" />
+         <fileset dir="." includes="StartStreaming.bat" />
+         <!-- Include webcam.jar -->
+         <zipfileset dir="." includes="target/webcam.jar" fullpath="webcam.jar" />
+         <!-- Include license, readme and troubleshoting text files -->
+         <fileset dir="." includes="README.txt" />
+         <fileset dir="." includes="GPL.txt" />
+         <fileset dir="." includes="LICENSE.txt" />
+         <fileset dir="." includes="TROUBLESHOOTING.txt" />
+      </zip>
+   </target>
+   
+   <!-- Target for building both linux and windows distribution packages -->
+   <target name="dist" depends="distLinux,distWindows" description="build the dsitribution files"/>
+
+</project>
