@@ -4,7 +4,7 @@ import static com.neusoft.babymonitor.backend.webcam.Constants.*;
 
 /*
  This file is part of “Onni smart care desktop application” software
- Copyright (C) <2013>  Erasmus van Niekerk <erasmus.van.nieker@gmail.com>
+ Copyright (C) <2013>  Erasmus van Niekerk <erasmus.van.niekerk@sepsolutions.fi>
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
