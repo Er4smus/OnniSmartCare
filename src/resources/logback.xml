@@ -1,0 +1,16 @@
+<configuration>
+   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+         <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n
+         </pattern>
+      </encoder>
+   </appender>
+   
+   <!-- SET TO DEBUG LEVEL FOR MORE LOGS -->
+   <logger name="com.neusoft" level="INFO" />
+
+   <root level="DEBUG">
+      <appender-ref ref="STDOUT" />
+   </root>
+
+</configuration>
