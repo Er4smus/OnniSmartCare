@@ -5,7 +5,6 @@ Requirements
 Installation
 Licensing
 Known issues
-Authors
 Contact
 -----------------
 
@@ -18,7 +17,7 @@ The purpose of the application is to allow the parents to remotely monitor their
 Requirements
 ----------------
 Onni Smart Care Desktop Application works with the following Operation Systems:
-- Windows XP and up
+- Windows XP or latest
 - Linux
 
 
@@ -29,8 +28,8 @@ You need Ant to compile the source code. After installing Ant go to the root of 
 Running the application
 ----------------
 To start the application: 
-        On Windows: Open the file webcam.jar from extraction directory.
-        On Linux: Go to /usr/share/webcamstreaming directory and run the webcam.jar as sudo.
+        On Windows: Open the file startWebcam.jar from extraction directory.
+        On Linux: Go to /usr/share/webcamstreaming directory and run the startWebcam.jar as sudo.
 
 You need a webcam code from your server.
 
@@ -44,10 +43,6 @@ You cannot stream from outside your network in the following situations:
 - your computer is connected to a switch (switches does not support UPnP)
 - your computer is connected to a router that does not support UPnP protocol or the router is behind another router or switch.
 - your 3G carrier blocks the packages send from the routers.
- 
-
-Authors
-----------------
 
 Contact
 ----------------

@@ -1,5 +1,5 @@
 Copyright (C) <2013> 
-Erasmus van Niekerk <erasmus.van.niekerk@gmail.com>
+Erasmus van Niekerk <erasmus.van.niekerk@sepsolutions.fi>
 
 TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
